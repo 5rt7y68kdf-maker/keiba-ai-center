@@ -15,7 +15,7 @@
         .lock-box { background-color: #222222; border: 1px solid #d4af37; padding: 15px; border-radius: 12px; margin-bottom: 20px; }
         .pass-input { width: 85%; max-width: 200px; padding: 10px; font-size: 1.1rem; text-align: center; background: #111; color: #fff; border: 1px solid #aa8822; border-radius: 6px; font-weight: bold; }
         
-        /* ⚙️ 競馬場・日付・馬券条件選択操作パネル */
+        /* ⚙️ 操作パネル */
         .selector-box { background-color: #222222; border: 1px solid #333333; padding: 18px; border-radius: 12px; margin-bottom: 20px; text-align: left; }
         .selector-title { font-weight: bold; font-size: 0.95rem; margin-bottom: 12px; color: #d4af37; border-left: 3px solid #d4af37; padding-left: 8px; }
         .select-input, .text-input { width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; border: 1px solid #444444; margin-bottom: 15px; background: #111; color: #fff; box-sizing: border-box; }
@@ -24,13 +24,13 @@
         .btn-predict { width: 100%; background: linear-gradient(135deg, #e53e3e 0%, #9b2c2c 100%); color: white; border: none; padding: 14px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 0 #6b1d1d; }
         .btn-predict:active { transform: translateY(2px); box-shadow: none; }
         
-        /* 📊 馬券収支結果リポートエリア */
+        /* 📊 馬券収支結果リポート表示カード */
         .result-report-card { background: #2a2415; border: 1px solid #d4af37; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: left; }
         .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .report-item { background: #111; padding: 10px; border-radius: 6px; text-align: center; border: 1px solid #333; }
         .report-val { font-weight: bold; font-size: 1.1rem; margin-top: 4px; }
 
-        /* 🔮 AI予想・シミュレーション出力エリア */
+        /* 🔮 詳細リポートエリア */
         .prediction-box { background: linear-gradient(135deg, #251c1c 0%, #1a1515 100%); border: 2px solid #e53e3e; padding: 15px; border-radius: 12px; margin-top: 20px; text-align: left; }
         .prediction-header { color: #f56565; font-weight: bold; font-size: 1.1rem; margin-bottom: 12px; border-bottom: 1px solid #9b2c2c; padding-bottom: 6px; }
         
@@ -54,7 +54,7 @@
             <input type="tel" id="password" class="pass-input" placeholder="4桁のパスワードを入力" maxlength="4">
         </div>
 
-        <!-- ⚙️ あなたが本当に求めていた、すべての条件を選べるカスタム操作パネル -->
+        <!-- ⚙️ 操作パネル -->
         <div class="selector-box">
             <div class="selector-title">🔍 スキャン条件を設定してください</div>
             
@@ -82,10 +82,10 @@
             <select id="sim-pop" class="select-input">
                 <option value="全人気">すべての人気順 (1〜16人気)</option>
                 <option value="1">1番人気</option><option value="2">2番人気</option><option value="3">3番人気</option>
-                <option value="4">4番人気</option><option value="5">5番人気</option><option value="9">9番人気</option>
+                <option value="4">4番人気</option><option value="5">5番人気</option><option value="7">7番人気</option><option value="9">9番人気</option>
             </select>
 
-            <div style="border-top: 1px solid #333; margin: 15px 0; padding-top: 10px;">
+            <div style="border-top: 1px solid #33; margin: 15px 0; padding-top: 10px;">
                 <div class="selector-title" style="border-left-color: #e53e3e; color: #f56565;">💰 馬券投資・金額設定</div>
             </div>
 
@@ -101,7 +101,7 @@
             <button id="predict-btn" class="btn-predict" onclick="executeUltimateSimulation()">🧠 過去実績データから収支を計算する</button>
         </div>
 
-        <!-- 📊 【新規】確定馬券収支リポート表示カード -->
+        <!-- 📊 【JRA実績同期】シミュレーション集計結果 -->
         <div class="result-report-card" id="report-card" style="display: none;">
             <div style="font-weight: bold; color: #d4af37; border-bottom: 1px solid #444; padding-bottom: 5px; font-size: 0.95rem;">🎯 【JRA実績同期】シミュレーション集計結果</div>
             <div class="report-grid">
@@ -115,7 +115,7 @@
             </div>
         </div>
 
-        <!-- 🎯 各レースのリアルな馬名・オッズ・結果一覧表 -->
+        <!-- 🎯 一覧表 -->
         <div class="prediction-box">
             <div class="prediction-header">📋 詳細レース走査リポート</div>
             <div class="table-responsive">
@@ -147,7 +147,6 @@
                 return; 
             }
 
-            // スマホ画面の入力フォームから、すべての条件の値を指先から直接取得
             var condDate = document.getElementById("sim-date").value.trim();
             var condVenue = document.getElementById("sim-venue").value;
             var condWaku = document.getElementById("sim-waku").value;
@@ -159,5 +158,5 @@
             btn.innerText = "📡 JRA実績データラボから過去ログをパース中...";
 
             setTimeout(function() {
-                // 🌟 あなたがパソコンで大成功させた、JRAデータラボ直結の本物の実績データ群（ダービー日など）
                 var jra_historical_database = [
+                    {date:"20240526", venue:"東京", race:"11R", waku:1, num:2, name:"レガレイラ", odds:4.2, pop:"2", order:5, tan_pay:0, fuku_pay:0},
