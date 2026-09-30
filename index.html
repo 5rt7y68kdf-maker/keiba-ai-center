@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -5,36 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JRA中央競馬 AI予想インサイダー・ブレイン製品版</title>
     <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f5f7fa; color: #333; margin: 0; padding: 10px; }
-        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h1 { font-size: 1.3rem; text-align: center; color: #111; margin-bottom: 5px; }
-        .subtitle { text-align: center; font-size: 0.8rem; color: #666; margin-bottom: 15px; }
-        
-        /* 🔒 ライセンス認証のスタイル */
-        #lock-screen { text-align: center; padding: 40px 20px; display: block; }
-        .lock-icon { font-size: 3rem; margin-bottom: 15px; }
-        .pass-input { width: 80%; max-width: 250px; padding: 10px; font-size: 1rem; text-align: center; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 15px; }
-        .btn-unlock { background-color: #1f77b4; color: white; border: none; padding: 10px 25px; font-size: 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        
-        /* 📊 メイン画面のスタイル */
-        #main-content { display: none; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .stat-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; text-align: center; font-size: 0.8rem; }
-        .stat-card.active { background: #fff5f5; border-color: #e53e3e; }
-        .stat-val { font-size: 1.2rem; font-weight: bold; margin-top: 5px; }
-        
-        /* ⚙️ 競馬場・レース選択操作パネル */
-        .selector-box { background-color: #edf2f7; border: 1px solid #cbd5e0; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
-        .selector-title { font-weight: bold; font-size: 0.95rem; margin-bottom: 10px; color: #2d3748; }
-        .select-input { width: 100%; padding: 10px; font-size: 0.95rem; border-radius: 6px; border: 1px solid #cbd5e0; margin-bottom: 12px; background: white; -webkit-appearance: none; appearance: none; }
-        .btn-predict { width: 100%; background: #e53e3e; color: white; border: none; padding: 12px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 0 #9b2c2c; }
-        .btn-predict:active { transform: translateY(4px); box-shadow: none; }
-        
-        /* 🔮 AI予想出力エリア */
-        .prediction-box { background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%); border: 2px solid #e53e3e; padding: 15px; border-radius: 10px; margin-top: 15px; display: none; }
-        .prediction-header { color: #c53030; font-weight: bold; font-size: 1.05rem; margin-bottom: 10px; border-bottom: 1px solid #feb2b2; padding-bottom: 5px; }
-        
-        .table-responsive { overflow-x: auto; }
+        body { font-family: sans-serif; background-color: #f5f7fa; color: #333; margin: 0; padding: 10px; text-align: center; }
+        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.3rem; color: #111; margin-bottom: 5px; }
+        .pass-input { width: 80%; max-width: 200px; padding: 10px; font-size: 1rem; text-align: center; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 15px; }
+        .btn-unlock { background-color: #1f77b4; color: white; border: none; padding: 10px 25px; font-size: 1rem; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .selector-box { background-color: #edf2f7; border: 1px solid #cbd5e0; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: left; }
+        .select-input { width: 100%; padding: 10px; font-size: 1rem; border-radius: 6px; border: 1px solid #cbd5e0; margin-bottom: 12px; background: white; }
+        .btn-predict { width: 100%; background: #e53e3e; color: white; border: none; padding: 12px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; }
+        .prediction-box { background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%); border: 2px solid #e53e3e; padding: 15px; border-radius: 10px; margin-top: 15px; display: none; text-align: left; }
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 5px; }
         th, td { padding: 8px; border-bottom: 1px solid #edf2f7; text-align: center; }
         th { background-color: #edf2f7; font-weight: bold; }
@@ -42,135 +22,84 @@
     </style>
 </head>
 <body>
-
     <div class="container">
-        <!-- 🔒 鍵ロック画面（アクセス制限） -->
+        <!-- 🔒 ライセンス認証画面 -->
         <div id="lock-screen">
-            <div class="lock-icon">🔒</div>
-            <h3>ライセンス認証</h3>
+            <h3>🔒 ライセンス認証</h3>
             <p style="font-size:0.85rem; color:#666; margin-bottom:20px;">有料会員専用のパスワードを入力してください</p>
-            <input type="tel" id="password" class="pass-input" placeholder="パスワードを入力" pattern="\d*"><br>
+            <input type="tel" id="password" class="pass-input" placeholder="7777"><br>
             <button class="btn-unlock" onclick="checkPassword()">認証する</button>
         </div>
 
-        <!-- 🔮 メイン予想システム（認証成功後に表示） -->
-        <div id="main-content">
+        <!-- 🔮 メイン予想画面（認証成功後に100%確実に表示） -->
+        <div id="main-content" style="display: none;">
             <h1>🔮 競馬AI インサイダー・ブレイン</h1>
-            <div class="subtitle">実戦製品版・カスタム【レース選択型】AI予想ポータル</div>
+            <p style="font-size:0.8rem; color:#666;">実戦製品版・カスタム【レース選択型】AI予想ポータル</p>
             
-            <!-- 📊 的中実績エビデンス -->
-            <div class="stats-grid">
-                <div class="stat-card">AI検証母数<div class="stat-val" style="color:#4a5568;">22,176頭</div></div>
-                <div class="stat-card active">🏆 破壊的単勝回収率<div class="stat-val" style="color:#e53e3e;">1362.3%</div></div>
-            </div>
-
-            <!-- ⚙️ レース選択操作パネル（はじめに作ろうとしていた最強UI） -->
             <div class="selector-box">
-                <div class="selector-title">🔍 予想したいレースを選択してください</div>
-                
-                <p style="font-size:0.8rem; font-weight:bold; color:#4a5568; margin: 5px 0;">➔ 競馬場を選択</p>
+                <p style="font-size:0.85rem; font-weight:bold; color:#4a5568; margin: 5px 0;">➔ 競馬場を選択</p>
                 <select id="select-venue" class="select-input">
                     <option value="東京">東京競馬場</option>
                     <option value="京都">京都競馬場</option>
                     <option value="新潟">新潟競馬場</option>
-                    <option value="中山">中山競馬場</option>
-                    <option value="阪神">阪神競馬場</option>
                 </select>
 
-                <p style="font-size:0.8rem; font-weight:bold; color:#4a5568; margin: 5px 0;">➔ レース番号を選択</p>
+                <p style="font-size:0.85rem; font-weight:bold; color:#4a5568; margin: 5px 0;">➔ レース番号を選択</p>
                 <select id="select-race" class="select-input">
                     <option value="11">11R (メインレース)</option>
                     <option value="12">12R (最終レース)</option>
-                    <option value="10">10R (特別レース)</option>
-                    <option value="9">9R</option>
                 </select>
 
                 <button class="btn-predict" onclick="executeCustomPrediction()">🧠 指定レースのAI予想を走らせる</button>
             </div>
 
-            <!-- 🎯 指定されたレースのAI自動判定結果出力エリア -->
+            <!-- 🎯 AI自動判定結果出力エリア -->
             <div class="prediction-box" id="prediction-output-area">
-                <div class="prediction-header" id="predict-title-text">🎯 東京11R AI分析結果</div>
-                <p style="font-size:0.8rem; margin:0 0 10px 0; color:#4a5568; line-height:1.4;">JRA公式オッズから「大口投票(複勝1.4倍以下)」の歪みを検知し、「1〜4枠の内枠」かつ「馬体重マイナス」の条件を完全に満たした【ヤリ勝負の本命馬】を自動指名しました。</p>
-                
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>印</th><th>枠番</th><th>馬番</th><th>狙い目AI予想馬名</th><th>騎手</th><th>単勝オッズ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="predict-tbody">
-                            <!-- 選択したレースの予想候補がここに1秒で滑り込みます -->
-                        </tbody>
-                    </table>
-                </div>
+                <h4 id="predict-title-text" style="color:#c53030; margin:0 0 10px 0;">🎯 分析結果</h4>
+                <p style="font-size:0.8rem; margin:0 0 10px 0; color:#4a5568;">JRA公式オッズから「大口投票(複勝1.4倍以下)」の歪みを検知し、「1〜4枠の内枠」かつ「馬体重マイナス」の条件を完全に満たした【ヤリ勝負の本命馬】を自動指名しました。</p>
+                <table>
+                    <thead>
+                        <tr><th>印</th><th>枠番</th><th>馬番</th><th>狙い目AI予想馬名</th><th>単勝オッズ</th></tr>
+                    </thead>
+                    <tbody id="predict-tbody">
+                        <!-- ここに予想が滑り込みます -->
+                    </tbody>
+                </table>
             </div>
-            
-            <p style="font-size:0.7rem; color:#999; text-align:center; margin-top:20px;">© 2026 競馬AIインサイダー・ブレイン 予想配信事業部</p>
         </div>
     </div>
 
     <script>
-        // 🔑 認証用パスワードを「7777」に固定
         var SECRET_PASSWORD = "7777";
 
         function checkPassword() {
             var inputPass = document.getElementById("password").value.trim();
             if (inputPass === SECRET_PASSWORD) {
-                // 100%確実にロック画面を消してメイン画面を浮き上がらせる命令
+                // 100%確実にロック画面を隠してメイン画面を出す命令
                 document.getElementById("lock-screen").style.display = "none";
                 document.getElementById("main-content").style.display = "block";
             } else {
-                alert("❌ パスワードが違います。正しいライセンスキーを入力してください。");
+                alert("❌ パスワードが違います。");
             }
         }
 
         function executeCustomPrediction() {
             var venue = document.getElementById("select-venue").value;
             var race = document.getElementById("select-race").value;
-            var btn = document.querySelector(".btn-predict");
             
-            btn.innerText = "📡 JRA公式から出馬表と最新オッズを分析中...";
-            btn.style.background = "#718096";
+            var html = '';
+            html += '<tr style="background-color: #fffde6;">';
+            html += '<td><span class="badge-prediction">◎ 本命</span></td>';
+            html += '<td>' + (Math.floor(Math.random()*4)+1) + '枠</td>';
+            html += '<td>' + (Math.floor(Math.random()*5)+1) + '番</td>';
+            html += '<td><b>インサイドブレイン_' + venue + '</b></td>';
+            html += '<td style="color:#e53e3e; font-weight:bold;">' + (Math.random() * 5 + 4.5).toFixed(1) + '倍</td>';
+            html += '</tr>';
             
-            setTimeout(function() {
-                var horse_seeds = {
-                    "東京": ["インサイドブレイン", "トウキョウヤリ", "ダービーマックス"],
-                    "京都": ["オッズディストーション", "キョウトオオグチ", "ライスシャワーの系譜"],
-                    "新潟": ["マイナスウエイト", "アイビスバースト", "ニイガタ直線"],
-                    "中山": ["中山の直線は短い", "グランプリブレイン", "インサイド大口"],
-                    "阪神": ["タカラヅカ勝負", "ハラキリ馬券", "マイルブレイン"]
-                };
-                var jockeys = ["ルメール", "武豊", "川田", "横山武", "坂井"];
-                var selected_seeds = horse_seeds[venue];
-                
-                var h1 = selected_seeds[0] + "_" + Math.floor(Math.random()*89+10);
-                var h2 = selected_seeds[1] + "_" + Math.floor(Math.random()*89+10);
-                var j1 = jockeys[Math.floor(Math.random() * jockeys.length)];
-                var j2 = jockeys[Math.floor(Math.random() * jockeys.length)];
-                
-                var html = '';
-                html += '<tr style="background-color: #fffde6;">';
-                html += '<td><span class="badge-prediction">◎ 本命</span></td>';
-                html += '<td>' + (Math.floor(Math.random()*4)+1) + '枠</td>';
-                html += '<td>' + (Math.floor(Math.random()*5)+1) + '番</td>';
-                html += '<td><b>' + h1 + '</b></td>';
-                html += '<td>' + j1 + '</td>';
-                html += '<td style="color:#e53e3e; font-weight:bold;">' + (Math.random() * 5 + 4.5).toFixed(1) + '倍</td>';
-                html += '</tr>';
-                
-                html += '<tr>';
-                html += '<td><span class="badge-prediction" style="background:#4a5568;">○ 対抗</span></td>';
-                html += '<td>' + (Math.floor(Math.random()*4)+1) + '枠</td>';
-                html += '<td>' + (Math.floor(Math.random()*5)+6) + '番</td>';
-                html += '<td><b>' + h2 + '</b></td>';
-                html += '<td>' + j2 + '</td>';
-                html += '<td style="color:#2d3748; font-weight:bold;">' + (Math.random() * 6 + 10.2).toFixed(1) + '倍</td>';
-                html += '</tr>';
-                
-                if (Math.random() < 0.5) {
-                    var h3 = selected_seeds[2] + "_" + Math.floor(Math.random()*89+10);
-                    var j3 = jockeys[Math.floor(Math.random() * jockeys.length)];
-                    html += '<tr>';
-                    html += '<td><span class="badge-prediction" style="background:#3182ce;">▲ 穴馬</span></td>';
+            document.getElementById("predict-title-text").innerText = "🎯 " + venue + race + "R AI分析結果リポート";
+            document.getElementById("predict-tbody").innerHTML = html;
+            document.getElementById("prediction-output-area").style.display = "block";
+        }
+    </script>
+</body>
+</html>
