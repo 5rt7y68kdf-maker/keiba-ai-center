@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JRA中央競馬 AI出馬表ポータル製品版</title>
     <style>
+        /* 高級ブラックゴールド調のVIP商用デザイン */
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #111111; color: #dddddd; margin: 0; padding: 10px; text-align: center; }
         .container { max-width: 550px; margin: 0 auto; background: #1a1a1a; padding: 20px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); border: 1px solid #d4af37; }
         h1 { font-size: 1.4rem; color: #d4af37; margin-bottom: 5px; font-weight: bold; }
@@ -108,7 +109,7 @@
                 if (condDate !== row.date || condVenue !== row.venue || condRace !== row.race) continue;
                 t_bets++;
                 var pay = 0; var is_hit = false;
-                if (condTicket === "1") {
+                if (condTicket === "1" || condTicket === "１") {
                     if (row.order === 1) { pay = Math.floor(condMoney * (row.tan / 100)); is_hit = true; }
                 } else {
                     if (row.order <= 3) { pay = Math.floor(condMoney * (row.fuku / 100)); is_hit = true; }
@@ -128,5 +129,3 @@
             document.getElementById("report-header-title").innerText = "📋 " + condDate + " " + condVenue + condRace + " AI確定出馬表";
         }
     </script>
-</body>
-</html>
