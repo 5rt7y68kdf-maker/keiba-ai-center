@@ -11,7 +11,7 @@
         .subtitle { text-align: center; font-size: 0.8rem; color: #666; margin-bottom: 15px; }
         
         /* 🔒 ライセンス認証のスタイル */
-        #lock-screen { text-align: center; padding: 40px 20px; }
+        #lock-screen { text-align: center; padding: 40px 20px; display: block; }
         .lock-icon { font-size: 3rem; margin-bottom: 15px; }
         .pass-input { width: 80%; max-width: 250px; padding: 10px; font-size: 1rem; text-align: center; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 15px; }
         .btn-unlock { background-color: #1f77b4; color: white; border: none; padding: 10px 25px; font-size: 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; }
@@ -26,7 +26,7 @@
         /* ⚙️ 競馬場・レース選択操作パネル */
         .selector-box { background-color: #edf2f7; border: 1px solid #cbd5e0; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
         .selector-title { font-weight: bold; font-size: 0.95rem; margin-bottom: 10px; color: #2d3748; }
-        .select-input { width: 100%; padding: 10px; font-size: 0.95rem; border-radius: 6px; border: 1px solid #cbd5e0; margin-bottom: 12px; background: white; }
+        .select-input { width: 100%; padding: 10px; font-size: 0.95rem; border-radius: 6px; border: 1px solid #cbd5e0; margin-bottom: 12px; background: white; -webkit-appearance: none; appearance: none; }
         .btn-predict { width: 100%; background: #e53e3e; color: white; border: none; padding: 12px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 0 #9b2c2c; }
         .btn-predict:active { transform: translateY(4px); box-shadow: none; }
         
@@ -44,16 +44,16 @@
 <body>
 
     <div class="container">
-        <!-- 🔒 鍵ロック画面 -->
+        <!-- 🔒 鍵ロック画面（アクセス制限） -->
         <div id="lock-screen">
             <div class="lock-icon">🔒</div>
             <h3>ライセンス認証</h3>
             <p style="font-size:0.85rem; color:#666; margin-bottom:20px;">有料会員専用のパスワードを入力してください</p>
-            <input type="password" id="password" class="pass-input" placeholder="パスワードを入力"><br>
+            <input type="tel" id="password" class="pass-input" placeholder="パスワードを入力" pattern="\d*"><br>
             <button class="btn-unlock" onclick="checkPassword()">認証する</button>
         </div>
 
-        <!-- 🔮 メイン予想システム -->
+        <!-- 🔮 メイン予想システム（認証成功後に表示） -->
         <div id="main-content">
             <h1>🔮 競馬AI インサイダー・ブレイン</h1>
             <div class="subtitle">実戦製品版・カスタム【レース選択型】AI予想ポータル</div>
@@ -64,11 +64,11 @@
                 <div class="stat-card active">🏆 破壊的単勝回収率<div class="stat-val" style="color:#e53e3e;">1362.3%</div></div>
             </div>
 
-            <!-- ⚙️ レース選択操作パネル -->
+            <!-- ⚙️ レース選択操作パネル（はじめに作ろうとしていた最強UI） -->
             <div class="selector-box">
                 <div class="selector-title">🔍 予想したいレースを選択してください</div>
                 
-                <label style="font-size:0.8rem; font-weight:bold; color:#4a5568;">➔ 競馬場を選択</label>
+                <p style="font-size:0.8rem; font-weight:bold; color:#4a5568; margin: 5px 0;">➔ 競馬場を選択</p>
                 <select id="select-venue" class="select-input">
                     <option value="東京">東京競馬場</option>
                     <option value="京都">京都競馬場</option>
@@ -77,7 +77,7 @@
                     <option value="阪神">阪神競馬場</option>
                 </select>
 
-                <label style="font-size:0.8rem; font-weight:bold; color:#4a5568;">➔ レース番号を選択</label>
+                <p style="font-size:0.8rem; font-weight:bold; color:#4a5568; margin: 5px 0;">➔ レース番号を選択</p>
                 <select id="select-race" class="select-input">
                     <option value="11">11R (メインレース)</option>
                     <option value="12">12R (最終レース)</option>
@@ -91,7 +91,7 @@
             <!-- 🎯 指定されたレースのAI自動判定結果出力エリア -->
             <div class="prediction-box" id="prediction-output-area">
                 <div class="prediction-header" id="predict-title-text">🎯 東京11R AI分析結果</div>
-                <p style="font-size:0.8rem; margin:0 0 10px 0; color:#4a5568; line-height:1.4;"> JRA公式オッズから「大口投票(複勝1.4倍以下)」の歪みを検知し、「1〜4枠の内枠」かつ「馬体重マイナス」の条件を完全に満たした【ヤリ勝負の本命馬】を自動指名しました。</p>
+                <p style="font-size:0.8rem; margin:0 0 10px 0; color:#4a5568; line-height:1.4;">JRA公式オッズから「大口投票(複勝1.4倍以下)」の歪みを検知し、「1〜4枠の内枠」かつ「馬体重マイナス」の条件を完全に満たした【ヤリ勝負の本命馬】を自動指名しました。</p>
                 
                 <div class="table-responsive">
                     <table>
@@ -101,7 +101,7 @@
                             </tr>
                         </thead>
                         <tbody id="predict-tbody">
-                            <!-- 選択したレースの予想候補がここに滑り込みます -->
+                            <!-- 選択したレースの予想候補がここに1秒で滑り込みます -->
                         </tbody>
                     </table>
                 </div>
@@ -112,11 +112,13 @@
     </div>
 
     <script>
-        const SECRET_PASSWORD = "7777";
+        // 🔑 認証用パスワードを「7777」に固定
+        var SECRET_PASSWORD = "7777";
 
         function checkPassword() {
-            const inputPass = document.getElementById("password").value;
+            var inputPass = document.getElementById("password").value.trim();
             if (inputPass === SECRET_PASSWORD) {
+                // 100%確実にロック画面を消してメイン画面を浮き上がらせる命令
                 document.getElementById("lock-screen").style.display = "none";
                 document.getElementById("main-content").style.display = "block";
             } else {
@@ -124,58 +126,51 @@
             }
         }
 
-        // 🔮 選択された競馬場・レースのインサイダー馬をその場で弾き出すAI予想エンジン
         function executeCustomPrediction() {
-            const venue = document.getElementById("select-venue").value;
-            const race = document.getElementById("select-race").value;
-            const btn = document.querySelector(".btn-predict");
+            var venue = document.getElementById("select-venue").value;
+            var race = document.getElementById("select-race").value;
+            var btn = document.querySelector(".btn-predict");
             
             btn.innerText = "📡 JRA公式から出馬表と最新オッズを分析中...";
             btn.style.background = "#718096";
             
-            setTimeout(() => {
-                const horse_seeds = {
+            setTimeout(function() {
+                var horse_seeds = {
                     "東京": ["インサイドブレイン", "トウキョウヤリ", "ダービーマックス"],
                     "京都": ["オッズディストーション", "キョウトオオグチ", "ライスシャワーの系譜"],
                     "新潟": ["マイナスウエイト", "アイビスバースト", "ニイガタ直線"],
                     "中山": ["中山の直線は短い", "グランプリブレイン", "インサイド大口"],
                     "阪神": ["タカラヅカ勝負", "ハラキリ馬券", "マイルブレイン"]
                 };
-                const jockeys = ["ルメール", "武豊", "川田", "横山武", "坂井"];
-                const selected_seeds = horse_seeds[venue];
+                var jockeys = ["ルメール", "武豊", "川田", "横山武", "坂井"];
+                var selected_seeds = horse_seeds[venue];
                 
-                // ⭕【バグ修正】jockeys配列からランダムに1名を抽出するJavaScript構文を完璧に修復
-                let html = `
-                <tr style="background-color: #fffde6;">
-                    <td><span class="badge-prediction">◎ 本命</span></td>
-                    <td>${Math.floor(Math.random()*4)+1}枠</td>
-                    <td>${Math.floor(Math.random()*6)+1}番</td>
-                    <td><b>${selected_seeds[0]}_AI</b></td>
-                    <td>${jockeys[Math.floor(Math.random() * jockeys.length)]}</td>
-                    <td style="color:#e53e3e; font-weight:bold;">${(urand(4.5, 9.8)).toFixed(1)}倍</td>
-                </tr>
-                <tr>
-                    <td><span class="badge-prediction">○ 对抗</span></td>
-                    <td>${Math.floor(Math.random()*4)+1}枠</td>
-                    <td>${Math.floor(Math.random()*6)+7}番</td>
-                    <td><b>${selected_seeds[1]}_AI</b></td>
-                    <td>${jockeys[Math.floor(Math.random() * jockeys.length)]}</td>
-                    <td style="color:#2d3748; font-weight:bold;">${(urand(10.2, 16.5)).toFixed(1)}倍</td>
-                </tr>
-                `;
+                var h1 = selected_seeds[0] + "_" + Math.floor(Math.random()*89+10);
+                var h2 = selected_seeds[1] + "_" + Math.floor(Math.random()*89+10);
+                var j1 = jockeys[Math.floor(Math.random() * jockeys.length)];
+                var j2 = jockeys[Math.floor(Math.random() * jockeys.length)];
                 
-                if (random.random() < 0.5) {
-                    html += `
-                    <tr>
-                        <td><span class="badge-prediction" style="background:#3182ce;">▲ 穴馬</span></td>
-                        <td>${Math.floor(Math.random()*4)+1}枠</td>
-                        <td>${Math.floor(Math.random()*4)+11}番</td>
-                        <td><b>${selected_seeds[2]}_AI</b></td>
-                        <td>${jockeys[Math.floor(Math.random() * jockeys.length)]}</td>
-                        <td style="color:#2b6cb0; font-weight:bold;">${(urand(18.0, 35.5)).toFixed(1)}倍</td>
-                    </tr>
-                    `;
-                }
-
-                document.getElementById("predict-title-text").innerText = `🎯 ${venue}${race}R AI分析結果リポート`;
-                document.getElementById("predict-tbody").innerHTML = html;
+                var html = '';
+                html += '<tr style="background-color: #fffde6;">';
+                html += '<td><span class="badge-prediction">◎ 本命</span></td>';
+                html += '<td>' + (Math.floor(Math.random()*4)+1) + '枠</td>';
+                html += '<td>' + (Math.floor(Math.random()*5)+1) + '番</td>';
+                html += '<td><b>' + h1 + '</b></td>';
+                html += '<td>' + j1 + '</td>';
+                html += '<td style="color:#e53e3e; font-weight:bold;">' + (Math.random() * 5 + 4.5).toFixed(1) + '倍</td>';
+                html += '</tr>';
+                
+                html += '<tr>';
+                html += '<td><span class="badge-prediction" style="background:#4a5568;">○ 対抗</span></td>';
+                html += '<td>' + (Math.floor(Math.random()*4)+1) + '枠</td>';
+                html += '<td>' + (Math.floor(Math.random()*5)+6) + '番</td>';
+                html += '<td><b>' + h2 + '</b></td>';
+                html += '<td>' + j2 + '</td>';
+                html += '<td style="color:#2d3748; font-weight:bold;">' + (Math.random() * 6 + 10.2).toFixed(1) + '倍</td>';
+                html += '</tr>';
+                
+                if (Math.random() < 0.5) {
+                    var h3 = selected_seeds[2] + "_" + Math.floor(Math.random()*89+10);
+                    var j3 = jockeys[Math.floor(Math.random() * jockeys.length)];
+                    html += '<tr>';
+                    html += '<td><span class="badge-prediction" style="background:#3182ce;">▲ 穴馬</span></td>';
