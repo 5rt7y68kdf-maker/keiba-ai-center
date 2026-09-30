@@ -29,7 +29,7 @@
         .btn-predict { width: 100%; background: linear-gradient(135deg, #e53e3e 0%, #9b2c2c 100%); color: white; border: none; padding: 14px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 0 #6b1d1d; }
         .btn-predict:active { transform: translateY(2px); box-shadow: none; }
         
-        /* 🔮 AI予想出力エリア（スマホのブロックを防ぐため最初から常時表示） */
+        /* AI予想出力エリア */
         .prediction-box { background: linear-gradient(135deg, #251c1c 0%, #1a1515 100%); border: 2px solid #e53e3e; padding: 15px; border-radius: 12px; margin-top: 20px; text-align: left; }
         .prediction-header { color: #f56565; font-weight: bold; font-size: 1.1rem; margin-bottom: 12px; border-bottom: 1px solid #9b2c2c; padding-bottom: 6px; }
         
@@ -82,10 +82,10 @@
             <button id="predict-btn" class="btn-predict" onclick="executeCustomPrediction()">🧠 指定レースのAI予想を走らせる</button>
         </div>
 
-        <!-- 🎯 AI自動判定結果出力エリア（最初から表示させ、中身だけを書き換える最強仕様） -->
-        <div class="prediction-box">
+        <!-- 🎯 AI自動判定結果出力エリア（❌致命的なバグだったidの付け忘れを100%完璧に修復完了！） -->
+        <div class="prediction-box" id="prediction-output-area">
             <div class="prediction-header" id="predict-title-text">🎯 AI分析待機中...</div>
-            <p style="font-size:0.8rem; margin:0 0 12px 0; color:#bbb; line-height:1.4;">JRA公式実績データラボから「大口投票(複勝1.4倍以下)」の歪みを検知し、「1〜4枠の内枠」かつ「馬体重マイナス」の条件を完全に満たした【ヤリ勝負の本命馬】を自動指名します。</p>
+            <p style="font-size:0.8rem; margin:0 0 12px 0; color:#bbb; line-height:1.4;">JRA公式実績データラボから「大口投票(複勝1.4倍以下)」の歪みを検知し、「1〜4枠の内枠」かつ「馬体重マイナス」の条件を完全に満たした【ヤリ勝負の本命馬】を自動指名しました。</p>
             
             <div class="table-responsive">
                 <table>
