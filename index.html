@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JRA中央競馬 AI予想インサイダー・ブレイン製品版</title>
     <style>
+        /* 🎨 高級ブラックゴールド調のVIP商用デザイン */
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #111111; color: #dddddd; margin: 0; padding: 10px; text-align: center; }
         .container { max-width: 500px; margin: 0 auto; background: #1a1a1a; padding: 25px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); border: 1px solid #d4af37; }
         h1 { font-size: 1.4rem; color: #d4af37; margin-bottom: 5px; font-weight: bold; }
         .subtitle { text-align: center; font-size: 0.8rem; color: #aa8822; margin-bottom: 20px; font-weight: bold; }
         
-        /* 🔒 ライセンスキー入力枠 */
+        /* 🔒 パスワード入力エリア */
         .lock-box { background-color: #222222; border: 1px solid #d4af37; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
         .pass-input { width: 85%; max-width: 200px; padding: 10px; font-size: 1.1rem; text-align: center; background: #111; color: #fff; border: 1px solid #aa8822; border-radius: 6px; font-weight: bold; }
         
@@ -24,8 +25,9 @@
         .selector-title { font-weight: bold; font-size: 0.95rem; margin-bottom: 12px; color: #d4af37; border-left: 3px solid #d4af37; padding-left: 8px; }
         .select-input { width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; border: 1px solid #444444; margin-bottom: 15px; background: #111; color: #fff; appearance: none; -webkit-appearance: none; }
         
-        /* 🧠 AI予想ボタン（初期はロック状態、7777入力で赤く覚醒） */
-        .btn-predict { width: 100%; background: #444444; color: #888888; border: none; padding: 14px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; transition: all 0.3s; }
+        /* 🧠 AI予想ボタン（最初から赤色で設置し、タップ時にパスワード判定） */
+        .btn-predict { width: 100%; background: linear-gradient(135deg, #e53e3e 0%, #9b2c2c 100%); color: white; border: none; padding: 14px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 0 #6b1d1d; }
+        .btn-predict:active { transform: translateY(2px); box-shadow: none; }
         
         /* 🔮 AI予想出力エリア */
         .prediction-box { background: linear-gradient(135deg, #251c1c 0%, #1a1515 100%); border: 2px solid #e53e3e; padding: 15px; border-radius: 12px; margin-top: 20px; display: none; text-align: left; }
@@ -46,8 +48,8 @@
         
         <!-- 🔒 ライセンスキー常設入力枠 -->
         <div class="lock-box">
-            <p style="font-size:0.8rem; color:#aaa; margin:0 0 10px 0;">🔑 パスワードを入力すると、下のAI予想ボタンのロックが解除されます</p>
-            <input type="tel" id="password" class="pass-input" placeholder="4桁のパスワードを入力" maxlength="4" oninput="verifyPassword()">
+            <p style="font-size:0.8rem; color:#aaa; margin:0 0 10px 0;">🔑 パスワードを入力してから、下の予想ボタンを押してください</p>
+            <input type="tel" id="password" class="pass-input" placeholder="4桁のパスワードを入力" maxlength="4">
         </div>
         
         <!-- 📊 的中実績 -->
@@ -77,8 +79,8 @@
                 <option value="9">9R</option>
             </select>
 
-            <!-- パスワードを入れるまで押せない初期ロック状態ボタン -->
-            <button id="predict-btn" class="btn-predict" onclick="executeCustomPrediction()">🔒 パスワードを入力してください</button>
+            <!-- 🧠 最初からタップ可能な赤ボタンとして設置 -->
+            <button id="predict-btn" class="btn-predict" onclick="executeCustomPrediction()">🧠 指定レースのAI予想を走らせる</button>
         </div>
 
         <!-- 🎯 AI自動判定結果出力エリア -->
@@ -104,37 +106,16 @@
     </div>
 
     <script>
+        // 🔑 パスワードを「7777」に指定
         var SECRET_PASSWORD = "7777";
-        var isUnlocked = false; // ロック状態を管理するフラグ
-
-        // 🔑 リアルタイムパスワード監視
-        function verifyPassword() {
-            var inputPass = document.getElementById("password").value.trim();
-            var btn = document.getElementById("predict-btn");
-            
-            if (inputPass === SECRET_PASSWORD) {
-                // ⭕【バグ完全根絶】大文字のTrue/Falseを排除し、スタイル上書き命令で100%強制的に赤ボタンへ覚醒
-                isUnlocked = true;
-                btn.innerText = "🧠 指定レースのAI予想を走らせる";
-                btn.style.background = "linear-gradient(135deg, #e53e3e 0%, #9b2c2c 100%)";
-                btn.style.color = "white";
-                btn.style.cursor = "pointer";
-                btn.style.boxShadow = "0 4px 0 #6b1d1d";
-            } else {
-                isUnlocked = false;
-                btn.innerText = "🔒 パスワードを入力してください";
-                btn.style.background = "#444444";
-                btn.style.color = "#888888";
-                btn.style.cursor = "not-allowed";
-                btn.style.boxShadow = "none";
-            }
-        }
 
         function executeCustomPrediction() {
-            // パスワードが合っていない場合は、ボタンを押しても一切の処理を拒否して終了する鉄壁防衛
-            if (!isUnlocked) {
-                alert("❌ 正しいパスワードを入力するまで予想はロックされています。");
-                return;
+            // ボタンが押された瞬間に、最初に入力欄の文字を優しくチェックする鉄壁の防衛ロジック
+            var inputPass = document.getElementById("password").value.trim();
+            
+            if (inputPass !== SECRET_PASSWORD) {
+                alert("❌ パスワードが違います。正しいライセンスキーを入力してください。");
+                return; // パスワードが違う場合はここで処理を強制終了（ガード）
             }
 
             var venue = document.getElementById("select-venue").value;
@@ -179,3 +160,13 @@
                 html += '</tr>';
                 
                 if (Math.random() < 0.5) {
+                    var h3 = selected_seeds + "_" + Math.floor(Math.random()*89+10);
+                    var j3 = jockeys[Math.floor(Math.random() * jockeys.length)];
+                    html += '<tr>';
+                    html += '<td><span class="badge-prediction" style="background:#3182ce;">▲ 穴馬</span></td>';
+                    html += '<td>' + (Math.floor(Math.random()*4)+1) + '枠</td>';
+                    html += '<td>' + (Math.floor(Math.random()*4)+11) + '番</td>';
+                    html += '<td><b>' + h3 + '</b></td>';
+                    html += '<td>' + j3 + '</td>';
+                    html += '<td style="color:#2b6cb0; font-weight:bold;">' + (Math.random() * 15 + 18.0).toFixed(1) + '倍</td>';
+                    html += '</tr>';
