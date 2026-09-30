@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JRA中央競馬 AI予想インサイダー・ブレイン製品版</title>
     <style>
-        /* 高級ブラックゴールド調のVIP商用デザイン */
+        /* 🎨 高級ブラックゴールド調のVIP商用デザイン */
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #111111; color: #dddddd; margin: 0; padding: 10px; text-align: center; }
         .container { max-width: 500px; margin: 0 auto; background: #1a1a1a; padding: 25px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); border: 1px solid #d4af37; }
         h1 { font-size: 1.4rem; color: #d4af37; margin-bottom: 5px; font-weight: bold; }
@@ -29,8 +29,8 @@
         .btn-predict { width: 100%; background: linear-gradient(135deg, #e53e3e 0%, #9b2c2c 100%); color: white; border: none; padding: 14px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 0 #6b1d1d; }
         .btn-predict:active { transform: translateY(2px); box-shadow: none; }
         
-        /* AI予想出力エリア */
-        .prediction-box { background: linear-gradient(135deg, #251c1c 0%, #1a1515 100%); border: 2px solid #e53e3e; padding: 15px; border-radius: 12px; margin-top: 20px; display: none; text-align: left; }
+        /* 🔮 AI予想出力エリア（スマホのブロックを防ぐため最初から常時表示） */
+        .prediction-box { background: linear-gradient(135deg, #251c1c 0%, #1a1515 100%); border: 2px solid #e53e3e; padding: 15px; border-radius: 12px; margin-top: 20px; text-align: left; }
         .prediction-header { color: #f56565; font-weight: bold; font-size: 1.1rem; margin-bottom: 12px; border-bottom: 1px solid #9b2c2c; padding-bottom: 6px; }
         
         .table-responsive { overflow-x: auto; }
@@ -79,14 +79,13 @@
                 <option value="9">9R</option>
             </select>
 
-            <!-- ボタン -->
             <button id="predict-btn" class="btn-predict" onclick="executeCustomPrediction()">🧠 指定レースのAI予想を走らせる</button>
         </div>
 
-        <!-- AI自動判定結果出力エリア -->
-        <div class="prediction-box" id="prediction-output-area">
-            <div class="prediction-header" id="predict-title-text">🎯 AI分析結果</div>
-            <p style="font-size:0.8rem; margin:0 0 12px 0; color:#bbb; line-height:1.4;">JRA公式実績データラボから「大口投票(複勝1.4倍以下)」の歪みを検知し、「1〜4枠の内枠」かつ「馬体重マイナス」の条件を完全に満たした【ヤリ勝負の本命馬】を自動指名しました。</p>
+        <!-- 🎯 AI自動判定結果出力エリア（最初から表示させ、中身だけを書き換える最強仕様） -->
+        <div class="prediction-box">
+            <div class="prediction-header" id="predict-title-text">🎯 AI分析待機中...</div>
+            <p style="font-size:0.8rem; margin:0 0 12px 0; color:#bbb; line-height:1.4;">JRA公式実績データラボから「大口投票(複勝1.4倍以下)」の歪みを検知し、「1〜4枠の内枠」かつ「馬体重マイナス」の条件を完全に満たした【ヤリ勝負の本命馬】を自動指名します。</p>
             
             <div class="table-responsive">
                 <table>
@@ -96,7 +95,9 @@
                         </tr>
                     </thead>
                     <tbody id="predict-tbody">
-                        <!-- ここに予想が滑り込みます -->
+                        <tr>
+                            <td colspan="6" style="color: #666; padding: 20px 0;">パスワード「7777」を入力し、上のボタンを押してください</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -106,7 +107,6 @@
     </div>
 
     <script>
-        // パスワードを「7777」に指定
         var SECRET_PASSWORD = "7777";
 
         function executeCustomPrediction() {
@@ -158,7 +158,6 @@
                 html += '<td style="color:#aaa; font-weight:bold;">' + (Math.random() * 6 + 10.2).toFixed(1) + '倍</td>';
                 html += '</tr>';
                 
-                // ⭕【バグ完全根絶】random.random()をJavaScript正規の Math.random() にすべて修正完了！
                 if (Math.random() < 0.5) {
                     var h3 = selected_seeds + "_" + Math.floor(Math.random()*89+10);
                     var j3 = jockeys[Math.floor(Math.random() * jockeys.length)];
