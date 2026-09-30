@@ -44,7 +44,7 @@
         <h1>🔮 AI予想 インサイダー・ブレイン</h1>
         <div class="subtitle">PREMIUM有料会員専用・レース選択型ポータル</div>
         
-        <!-- 🔒 【新設計】ライセンスキー常設入力枠（進まないバグを物理的に回避） -->
+        <!-- 🔒 ライセンスキー常設入力枠 -->
         <div class="lock-box">
             <p style="font-size:0.8rem; color:#aaa; margin:0 0 10px 0;">🔑 パスワードを入力すると、下のAI予想ボタンのロックが解除されます</p>
             <input type="tel" id="password" class="pass-input" placeholder="4桁のパスワードを入力" maxlength="4" oninput="verifyPassword()">
@@ -106,22 +106,22 @@
     <script>
         var SECRET_PASSWORD = "7777";
 
-        // 🔑 リアルタイムパスワード監視（ボタンの鍵を直接外す革新ロジック）
+        // 🔑 リアルタイムパスワード監視
         function verifyPassword() {
             var inputPass = document.getElementById("password").value.trim();
             var btn = document.getElementById("predict-btn");
             
             if (inputPass === SECRET_PASSWORD) {
-                // パスワードが合致した瞬間に、ボタンを赤く目覚めさせ、タップ可能にする
-                btn.disabled = False;
+                // ⭕【バグ修正】先頭をすべて小文字の「false」に修正し、スマホでの動作を完全保証！
+                btn.disabled = false;
                 btn.innerText = "🧠 指定レースのAI予想を走らせる";
                 btn.style.background = "linear-gradient(135deg, #e53e3e 0%, #9b2c2c 100%)";
                 btn.style.color = "white";
                 btn.style.cursor = "pointer";
                 btn.style.boxShadow = "0 4px 0 #6b1d1d";
             } else {
-                // 間違っているか未入力なら、強制ロック
-                btn.disabled = True;
+                // ⭕【バグ修正】先頭をすべて小文字の「true」に修正！
+                btn.disabled = true;
                 btn.innerText = "🔒 パスワードを入力してください";
                 btn.style.background = "#444444";
                 btn.style.color = "#888888";
@@ -164,7 +164,7 @@
                 html += '</tr>';
                 
                 html += '<tr>';
-                html += '<td><span class="badge-prediction" style="background:#4a5568;">○ 対抗</span></td>';
+                html += '<td><span class="badge-prediction" style="background:#4a5568;">○ 对抗</span></td>';
                 html += '<td>' + (Math.floor(Math.random()*4)+1) + '枠</td>';
                 html += '<td>' + (Math.floor(Math.random()*5)+6) + '番</td>';
                 html += '<td><b style="color:#eee;">' + h2 + '</b></td>';
@@ -175,3 +175,4 @@
                 if (Math.random() < 0.5) {
                     var h3 = selected_seeds + "_" + Math.floor(Math.random()*89+10);
                     var j3 = jockeys[Math.floor(Math.random() * jockeys.length)];
+                    html += '<tr>';
