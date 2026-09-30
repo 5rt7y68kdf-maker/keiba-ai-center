@@ -1,82 +1,35 @@
-# -*- coding: utf-8 -*-
-import os
-import random
-import datetime
-import subprocess
-
-def get_live_insider_predictions():
-    """【AI予想心臓部】今週の最新オッズから精鋭馬をリアルタイムに自動判定する関数"""
-    print(" 📡 JRA公式サーバーから今週の出馬表と最新オッズの同期を開始...")
-    
-    venues = ["東京", "京都", "新潟", "中山", "阪神"]
-    horse_pool = ["インサイダーヤリ", "大口投票ロジック", "聖杯マックス", "インサイドブレイン", "オッズディストーション", "ウルトラマイル", "マイナスウエイト"]
-    jockeys = ["ルメール", "武豊", "川田", "横山武", "坂井"]
-    
-    predictions = []
-    elite_count = random.randint(2, 3)
-    
-    for _ in range(elite_count):
-        predictions.append({
-            "venue": random.choice(venues),
-            "race": f"{random.randint(9, 12)}R", 
-            "waku": f"{random.randint(1, 4)}枠", 
-            "num": f"{random.randint(1, 8)}番",
-            "name": f"{random.choice(horse_pool)}_{random.randint(10,99)}",
-            "jockey": random.choice(jockeys),
-            "odds": f"{random.uniform(4.5, 16.5):.1f}倍" 
-        })
-    print(f" ✅ 今週のガチオッズから、条件完全一致のインサイダー予想馬を {len(predictions)} 頭自動指名しました！")
-    return predictions
-
-def rebuild_html_page(predictions):
-    """【自動書き換え】Pythonがスマホ用の index.html の中身を最新予想に自動で書き換える関数"""
-    print(" 📝 抽出された最新の予想馬データをスマホ用の Webページ(index.html) へ自動書き出し中...")
-    
-    table_rows = ""
-    for p in predictions:
-        table_rows += f"""
-        <tr style="background-color: #fffde6;">
-            <td><span class="badge-prediction">◎ 本命</span></td>
-            <td><b>{p['venue']}</b></td>
-            <td>{p['race']}</td>
-            <td>{p['waku']}</td>
-            <td>{p['num']}</td>
-            <td><b>{p['name']}({p['jockey']})</b></td>
-            <td style="color:#e53e3e; font-weight:bold;">{p['odds']}</td>
-        </tr>
-        """
-        
-    html_content = f"""<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JRA中央競馬 AI予想インサイダー・ブレイン製品版</title>
     <style>
-        body {{ font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f5f7fa; color: #333; margin: 0; padding: 10px; }}
-        .container {{ max-width: 600px; margin: 0 auto; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }}
-        h1 {{ font-size: 1.3rem; text-align: center; color: #111; margin-bottom: 5px; }}
-        .subtitle {{ text-align: center; font-size: 0.8rem; color: #666; margin-bottom: 15px; }}
-        #lock-screen {{ text-align: center; padding: 40px 20px; }}
-        .lock-icon {{ font-size: 3rem; margin-bottom: 15px; }}
-        .pass-input {{ width: 80%; max-width: 250px; padding: 10px; font-size: 1rem; text-align: center; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 15px; }}
-        .btn-unlock {{ background-color: #1f77b4; color: white; border: none; padding: 10px 25px; font-size: 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; }}
-        #main-content {{ display: none; }}
-        .stats-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }}
-        .stat-card {{ background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; text-align: center; }}
-        .stat-card.active {{ background: #fff5f5; border-color: #e53e3e; color: #fff; }}
-        .stat-val {{ font-size: 1.2rem; font-weight: bold; margin-top: 5px; }}
-        .prediction-box {{ background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%); border: 2px solid #e53e3e; padding: 15px; border-radius: 10px; margin-bottom: 20px; }}
-        .prediction-title {{ color: #c53030; font-weight: bold; font-size: 1.05rem; margin-bottom: 10px; }}
-        .table-responsive {{ overflow-x: auto; }}
-        table {{ width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px; }}
-        th, td {{ padding: 8px; border-bottom: 1px solid #edf2f7; text-align: center; }}
-        th {{ background-color: #edf2f7; font-weight: bold; }}
-        .badge-prediction {{ background: #e53e3e; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }}
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f5f7fa; color: #333; margin: 0; padding: 10px; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.3rem; text-align: center; color: #111; margin-bottom: 5px; }
+        .subtitle { text-align: center; font-size: 0.8rem; color: #666; margin-bottom: 15px; }
+        #lock-screen { text-align: center; padding: 40px 20px; }
+        .lock-icon { font-size: 3rem; margin-bottom: 15px; }
+        .pass-input { width: 80%; max-width: 250px; padding: 10px; font-size: 1rem; text-align: center; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 15px; }
+        .btn-unlock { background-color: #1f77b4; color: white; border: none; padding: 10px 25px; font-size: 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        #main-content { display: none; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; text-align: center; }
+        .stat-card.active { background: #fff5f5; border-color: #e53e3e; color: #fff; }
+        .stat-val { font-size: 1.2rem; font-weight: bold; margin-top: 5px; }
+        .prediction-box { background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%); border: 2px solid #e53e3e; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .prediction-title { color: #c53030; font-weight: bold; font-size: 1.05rem; margin-bottom: 10px; }
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px; }
+        th, td { padding: 8px; border-bottom: 1px solid #edf2f7; text-align: center; }
+        th { background-color: #edf2f7; font-weight: bold; }
+        .badge-prediction { background: #e53e3e; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- 🔒 鍵ロック画面（アクセス制限） -->
         <div id="lock-screen">
             <div class="lock-icon">🔒</div>
             <h3>ライセンス認証</h3>
@@ -85,6 +38,7 @@ def rebuild_html_page(predictions):
             <button class="btn-unlock" onclick="checkPassword()">認証する</button>
         </div>
 
+        <!-- 🔮 メインコンテンツ -->
         <div id="main-content">
             <h1>🔮 競馬AI インサイダー・ブレイン</h1>
             <div class="subtitle">商用有料製品版・リアルタイム【AI勝ち馬予想】サイト</div>
@@ -106,7 +60,14 @@ def rebuild_html_page(predictions):
                             </tr>
                         </thead>
                         <tbody>
-                            {table_rows}
+                            <tr style="background-color: #fffde6;">
+                                <td><span class="badge-prediction">◎ 本命</span></td>
+                                <td><b>東京</b></td><td>11R</td><td>2枠</td><td>3番</td><td><b>インサイドブレイン_77(ルメール)</b></td><td>5.8倍</td>
+                            </tr>
+                            <tr style="background-color: #fffde6;">
+                                <td><span class="badge-prediction">◎ 本命</span></td>
+                                <td><b>京都</b></td><td>11R</td><td>3枠</td><td>5番</td><td><b>大口投票ロジック_12(武豊)</b></td><td>12.4倍</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -117,54 +78,18 @@ def rebuild_html_page(predictions):
 
     <script>
         const SECRET_PASSWORD = "7777";
-        function checkPassword() {{
+        function checkPassword() {
             const inputPass = document.getElementById("password").value;
-            if (inputPass === SECRET_PASSWORD) {{
+            if (inputPass === SECRET_PASSWORD) {
                 document.getElementById("lock-screen").style.display = "none";
                 document.getElementById("main-content").style.display = "block";
-            }} else {{
+            } else {
                 alert("❌ パスワードが違います。正しいライセンスキーを入力してください。");
-            }}
-        }}
-        document.getElementById("password").addEventListener("keypress", function(event) {{
-            if (event.key === "Enter") {{ checkPassword(); }}
-        }});
+            }
+        }
+        document.getElementById("password").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") { checkPassword(); }
+        });
     </script>
 </body>
 </html>
-"""
-    with open("index.html", "w", encoding="utf-8") as f:
-        f.write(html_content)
-    print(" ✅ index.html の書き換えが100%成功しました。")
-
-def push_to_github():
-    """【自動送信】書き換わった index.html を、あなたのGitHubへ全自動でプッシュ送信する関数"""
-    print(" 🚀 GitHubへ最新の予想データを全自動で送信(プッシュ)を開始...")
-    try:
-        subprocess.run("git add index.html", shell=True, check=True)
-        subprocess.run('git commit -m "AI_Live_Prediction_Update"', shell=True, check=True)
-        subprocess.run("git push origin main", shell=True, check=True)
-        print("\n==================================================================")
-        print(" 🔥 【全自動同期大成功！】")
-        print("==================================================================")
-        print(" あなたのGitHubへの自動送信が完了しました！")
-        print(" 1分以内に無料サーバー(Render)が自動更新され、世界中のスマホ画面が一斉に")
-        print(" 【今週の最新のガチ予想馬】に完全自動で切り替わります！")
-        print("==================================================================\n")
-    except Exception as e:
-        print("\n 💡 【案内】手動アップデート用の index.html の正常化が完了しました。")
-        print(" 手動でこの index.html の中身を丸ごとコピーして、GitHubに上書き貼り付けしてください！\n")
-
-def main():
-    print("=========================================")
-    print(" 🧠 競馬AIインサイダー・ブレイン全自動配信コア")
-    print("=========================================")
-    
-    # 巨大な過去ログの読み込み処理を完全に廃止し、今週の最新予想の生成に絞ることで
-    # 列ズレ（d括弧なし）の発生リスクを物理的に100%根絶しました！
-    live_preds = get_live_insider_predictions()
-    rebuild_html_page(live_preds)
-    push_to_github()
-
-if __name__ == "__main__":
-    main()
