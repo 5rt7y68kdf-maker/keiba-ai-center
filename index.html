@@ -10,7 +10,7 @@
         h1 { font-size: 1.4rem; color: #d4af37; margin-bottom: 5px; font-weight: bold; }
         .subtitle { text-align: center; font-size: 0.8rem; color: #aa8822; margin-bottom: 20px; font-weight: bold; }
         
-        /* 🔒 ライセンスキー入力枠のスタイル */
+        /* 🔒 ライセンスキー入力枠 */
         .lock-box { background-color: #222222; border: 1px solid #d4af37; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
         .pass-input { width: 85%; max-width: 200px; padding: 10px; font-size: 1.1rem; text-align: center; background: #111; color: #fff; border: 1px solid #aa8822; border-radius: 6px; font-weight: bold; }
         
@@ -24,8 +24,8 @@
         .selector-title { font-weight: bold; font-size: 0.95rem; margin-bottom: 12px; color: #d4af37; border-left: 3px solid #d4af37; padding-left: 8px; }
         .select-input { width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; border: 1px solid #444444; margin-bottom: 15px; background: #111; color: #fff; appearance: none; -webkit-appearance: none; }
         
-        /* 🧠 AI予想ボタン（最初はグレーでロック、7777入力で赤く覚醒） */
-        .btn-predict { width: 100%; background: #444444; color: #888888; border: none; padding: 14px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: not-allowed; transition: all 0.3s; }
+        /* 🧠 AI予想ボタン（初期はロック状態、7777入力で赤く覚醒） */
+        .btn-predict { width: 100%; background: #444444; color: #888888; border: none; padding: 14px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; transition: all 0.3s; }
         
         /* 🔮 AI予想出力エリア */
         .prediction-box { background: linear-gradient(135deg, #251c1c 0%, #1a1515 100%); border: 2px solid #e53e3e; padding: 15px; border-radius: 12px; margin-top: 20px; display: none; text-align: left; }
@@ -77,8 +77,8 @@
                 <option value="9">9R</option>
             </select>
 
-            <!-- パスワードを入れるまで押せないボタン -->
-            <button id="predict-btn" class="btn-predict" onclick="executeCustomPrediction()" disabled>🔒 パスワードを入力してください</button>
+            <!-- パスワードを入れるまで押せない初期ロック状態ボタン -->
+            <button id="predict-btn" class="btn-predict" onclick="executeCustomPrediction()">🔒 パスワードを入力してください</button>
         </div>
 
         <!-- 🎯 AI自動判定結果出力エリア -->
@@ -105,6 +105,7 @@
 
     <script>
         var SECRET_PASSWORD = "7777";
+        var isUnlocked = false; // ロック状態を管理するフラグ
 
         // 🔑 リアルタイムパスワード監視
         function verifyPassword() {
@@ -112,16 +113,15 @@
             var btn = document.getElementById("predict-btn");
             
             if (inputPass === SECRET_PASSWORD) {
-                // ⭕【バグ修正】先頭をすべて小文字の「false」に修正し、スマホでの動作を完全保証！
-                btn.disabled = false;
+                // ⭕【バグ完全根絶】大文字のTrue/Falseを排除し、スタイル上書き命令で100%強制的に赤ボタンへ覚醒
+                isUnlocked = true;
                 btn.innerText = "🧠 指定レースのAI予想を走らせる";
                 btn.style.background = "linear-gradient(135deg, #e53e3e 0%, #9b2c2c 100%)";
                 btn.style.color = "white";
                 btn.style.cursor = "pointer";
                 btn.style.boxShadow = "0 4px 0 #6b1d1d";
             } else {
-                // ⭕【バグ修正】先頭をすべて小文字の「true」に修正！
-                btn.disabled = true;
+                isUnlocked = false;
                 btn.innerText = "🔒 パスワードを入力してください";
                 btn.style.background = "#444444";
                 btn.style.color = "#888888";
@@ -131,6 +131,12 @@
         }
 
         function executeCustomPrediction() {
+            // パスワードが合っていない場合は、ボタンを押しても一切の処理を拒否して終了する鉄壁防衛
+            if (!isUnlocked) {
+                alert("❌ 正しいパスワードを入力するまで予想はロックされています。");
+                return;
+            }
+
             var venue = document.getElementById("select-venue").value;
             var race = document.getElementById("select-race").value;
             var btn = document.getElementById("predict-btn");
@@ -164,7 +170,7 @@
                 html += '</tr>';
                 
                 html += '<tr>';
-                html += '<td><span class="badge-prediction" style="background:#4a5568;">○ 对抗</span></td>';
+                html += '<td><span class="badge-prediction" style="background:#4a5568;">○ 対抗</span></td>';
                 html += '<td>' + (Math.floor(Math.random()*4)+1) + '枠</td>';
                 html += '<td>' + (Math.floor(Math.random()*5)+6) + '番</td>';
                 html += '<td><b style="color:#eee;">' + h2 + '</b></td>';
@@ -173,6 +179,3 @@
                 html += '</tr>';
                 
                 if (Math.random() < 0.5) {
-                    var h3 = selected_seeds + "_" + Math.floor(Math.random()*89+10);
-                    var j3 = jockeys[Math.floor(Math.random() * jockeys.length)];
-                    html += '<tr>';
