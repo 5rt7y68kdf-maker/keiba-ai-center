@@ -6,7 +6,7 @@
     <title>JRA中央競馬 AI出馬表製品版</title>
     <style>
         body { font-family: sans-serif; background: #111; color: #ddd; padding: 10px; text-align: center; }
-        .container { max-width: 550px; margin: 0 auto; background: #1a1a1a; padding: 20px; border-radius: 16px; border: 1px solid #d4af37; }
+        .container { max-width: 550px; margin: 0 auto; background: #1a1a1a; padding: 20px; border-radius: 16px; border: 1px solid #d4af37; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
         h1 { font-size: 1.4rem; color: #d4af37; margin: 0 0 15px 0; }
         .select-input, .text-input { width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px; border: 1px solid #444; background: #111; color: #fff; box-sizing: border-box; margin-bottom: 15px; text-align: center; }
         .btn-predict { width: 100%; background: linear-gradient(135deg, #e53e3e 0%, #9b2c2c 100%); color: white; border: none; padding: 14px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; }
@@ -24,21 +24,27 @@
 <body>
     <div class="container">
         <h1>🔮 AI最高峰出馬表＆全馬券シミュレーター</h1>
+        <!-- 🔑 パスワード入力欄 -->
         <input type="tel" id="password" class="select-input" placeholder="🔑 パスワードを入力(7777)" maxlength="4">
         
-        <div class="selector-box" style="text-align:left;">
+        <!-- ⚙️ 条件設定操作パネル（HTMLの入れ子を1ミリの狂いもなく完全配列） -->
+        <div class="selector-box" style="text-align:left; background:#222; padding:15px; border-radius:12px; margin-bottom:15px; border:1px solid #333;">
             <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ ① 日付を選択（カレンダー起動）</p>
             <input type="date" id="sim-date" class="text-input" value="">
+            
             <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ ② 競馬場を入力（例: 東京）</p>
             <input type="text" id="sim-venue" class="text-input" placeholder="東京 / 中山 / 京都" value="">
+            
             <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ ③ レース番号を入力（例: 11R）</p>
             <input type="text" id="sim-race" class="text-input" placeholder="11R" value="">
+            
             <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ ④ 馬場傾向（バイアス）を選択</p>
             <select id="sim-bias" class="select-input">
                 <option value="フラット">フラット（標準展開）</option>
                 <option value="内枠有利">内枠有利</option>
                 <option value="外伸び有利">外伸び有利</option>
             </select>
+            
             <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ ⑤ 馬券種を選択</p>
             <select id="sim-ticket" class="select-input">
                 <option value="1">単勝馬券</option>
@@ -47,11 +53,14 @@
                 <option value="4">三連複馬券</option>
                 <option value="5">三連単馬券</option>
             </select>
+            
             <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ ⑥ 1点あたりの投資金額（円）</p>
             <input type="tel" id="sim-money" class="text-input" value="1000">
+            
             <button class="btn-predict" onclick="loadUltimateRaceCard()">🧠 AI出馬表と馬券収支を計算する</button>
         </div>
 
+        <!-- 📊 シミュレーション利益結果表示カード -->
         <div class="result-report-card" id="report-card" style="display: none;">
             <div style="font-weight: bold; color: #d4af37; border-bottom: 1px solid #444; padding-bottom: 5px;">📊 シミュレーション結果</div>
             <div class="report-grid">
@@ -61,6 +70,7 @@
             </div>
         </div>
 
+        <!-- 🎯 AI確定出馬表出力エリア -->
         <div class="prediction-box">
             <div style="color:#d4af37; font-weight:bold; margin-bottom:10px;">📋 AI確定出馬表</div>
             <table>
@@ -84,12 +94,14 @@
             var cB = document.getElementById("sim-bias").value;
             var cT = document.getElementById("sim-ticket").value;
             var cM = parseInt(document.getElementById("sim-money").value) || 1000;
+            var btn = document.querySelector(".btn-predict");
+            btn.innerText = "📡 5年分データ同期中...";
             
-            // ⭕【Mixed Content回避】暗号化セキュリティに引っかからないローカル直直Fetch
+            // 🚀 パソコンの app.py サーバーへデータを要求
             fetch(`http://localhost:5000/api/predict?date=${rD}&venue=${encodeURIComponent(cV)}&race=${encodeURIComponent(cR)}`)
             .then(res => res.json())
             .then(data => {
-                if (!data || data.length === 0) { alert("❌ 指定データがPCのCSV内にありません。"); return; }
+                if (!data || data.length === 0) { alert("❌ 指定データがPCのCSV内にありません。"); btn.innerText = "🧠 AI出馬表と馬券収支を計算する"; return; }
                 var html = ""; var t_bets = 0; var s_tan = 0; var s_fuk = 0; var m_pay = 0;
                 for (var j = 0; j < data.length; j++) {
                     var h = data[j]; t_bets++;
@@ -108,8 +120,7 @@
                     if (cT === "2" && h.order <= 3) pr = "<span style='color:#319795;font-weight:bold;'>+" + (Math.floor(cM * (h.fuku_pay / 100))).toLocaleString() + "円</span>";
                     html += `<tr><td>${h.waku}枠${h.num}番</td><td>${sig}</td><td><b>${h.name}</b><br><small style='color:#999;'>${h.pop}人気</small></td><td>${h.jockey}</td><td>${h.odds}倍</td><td>${od}</td><td>${pr}</td></tr>`;
                 }
-                var t_inv = cM;
-                var t_ret = 0;
+                var t_inv = cM; var t_ret = 0;
                 if (cT === "1") { t_inv = t_bets * cM; t_ret = Math.floor(cM * (s_tan / 100)); }
                 else if (cT === "2") { t_inv = t_bets * cM; t_ret = Math.floor(cM * (s_fuk / 100)); }
                 else { t_ret = Math.floor(cM * (m_pay / 100)); }
@@ -120,12 +131,9 @@
                 document.getElementById("res-pure").style.color = pure >= 0 ? "#e53e3e" : "#4a5568";
                 document.getElementById("predict-tbody").innerHTML = html;
                 document.getElementById("report-card").style.display = "block";
+                btn.innerText = "🧠 AI出馬表と馬券収支を計算する";
             }).catch(err => {
-                // 💡 PC連携がブロックされた場合のお宝セーフティデータ表示
+                // 📡 パソコン連携が遮断された場合の、内蔵型お宝セーフティデータ処理
                 var h_seeds = [
                     {waku:1, num:2, name:"レガレイラ", jockey:"北村宏", odds:4.2, pop:"2", order:5, tan_pay:0, fuku_pay:0, umaren_pay:6840, sanrenpuku_pay:21250, sanrentan_pay:275860},
                     {waku:3, num:5, name:"ダノンデサイル", jockey:"横山典", odds:46.6, pop:"9", order:1, tan_pay:4660, fuku_pay:680, umaren_pay:6840, sanrenpuku_pay:21250, sanrentan_pay:275860},
-                    {waku:7, num:15, name:"ジャスティンミラノ", jockey:"戸崎圭", odds:2.2, pop:"1", order:2, tan_pay:0, fuku_pay:130, umaren_pay:6840, sanrenpuku_pay:21250, sanrentan_pay:275860},
-                    {waku:6, num:13, name:"シンエンペラー", jockey:"坂井瑠", odds:13.1, pop:"7", order:3, tan_pay:0, fuku_pay:280, umaren_pay:6840, sanrenpuku_pay:21250, sanrentan_pay:275860}
-                ];
-                var html = ""; var t_bets = 0; var single_tan = 0; var single_fuku = 0; var multi_pay = 0;
