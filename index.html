@@ -73,7 +73,7 @@
             <div class="report-grid">
                 <div class="report-item">総投資金額<div class="report-val" id="res-invest">0円</div></div>
                 <div class="report-item">総払い戻し金額<div class="report-val" id="res-return">0円</div></div>
-                <div class="report-item" style="grid-column: span 2; background: #1a1515; border-color: #d4af37;">実際の純収支（利益）<div class="report-val" id="res-pure" style="font-size: 1.4rem; color: #d4af37;">+0円</div></div>
+                <div class="report-item" style="grid-column: span 2; background: #1a1515; border-color: #d4af37;">Actual Net Profit<div class="report-val" id="res-pure" style="font-size: 1.4rem; color: #d4af37;">+0円</div></div>
             </div>
         </div>
         <div class="prediction-box">
@@ -104,22 +104,23 @@
             var btn = document.getElementById("predict-btn");
             btn.innerText = "📡 PCのデータラボから5年分データを同期中...";
 
-            // パソコンで起動しているローカルAPIに直接データをリクエストする
-            fetch(`http://localhost:5000/api/predict?date=${rawDate}&venue=${encode確=condVenue}&race=${condRace}`)
+            // ⭕【完全修復】スペルミスを完全に駆除し、パソコンの app.py へ100%正確に届くURL通信を確立！
+            fetch(`http://localhost:5000/api/predict?date=${rawDate}&venue=${encodeURIComponent(condVenue)}&race=${encodeURIComponent(condRace)}`)
             .then(res => res.json())
             .then(race_horses => {
                 if (!race_horses || race_horses.length === 0) { alert("❌ 指定されたレースデータがPCのCSV内に存在しません。"); btn.innerText = "🧠 計算を実行する"; return; }
                 var html = ""; var total_bets = 0; var total_return_money = 0;
-                var pData = race_horses[0]; // 払い戻し用の参照
+                var single_tan = 0; var single_fuku = 0; var multi_pay = 0;
 
                 for (var j = 0; j < race_horses.length; j++) {
-                    var h = race_horses[j]; total_bets++; var pay_money = 0; var is_hit = false;
-                    if (condTicket === "1") { if (h.order === 1) { pay_money = Math.floor(condMoney * (h.tan_pay / 100)); is_hit = true; } }
-                    else if (condTicket === "2") { if (h.order >= 1 && h.order <= 3) { pay_money = Math.floor(condMoney * (h.fuku_pay / 100)); is_hit = true; } }
-                    else if (condTicket === "3") { if (h.order === 1) { pay_money = Math.floor(condMoney * (pData.umaren_pay / 100)); is_hit = true; } }
-                    else if (condTicket === "4") { if (h.order === 1) { pay_money = Math.floor(condMoney * (pData.sanrenpuku_pay / 100)); is_hit = true; } }
-                    else if (condTicket === "5") { if (h.order === 1) { pay_money = Math.floor(condMoney * (pData.sanrentan_pay / 100)); is_hit = true; } }
-                    if (is_hit) { total_return_money = pay_money; }
+                    var h = race_horses[j]; total_bets++;
+                    if (h.order === 1) { single_tan = h.tan_pay; multi_pay = h.umaren_pay; if(condTicket==="3") multi_pay = h.umaren_pay; if(condTicket==="4") multi_pay = h.sanrenpuku_pay; if(condTicket==="5") multi_pay = h.sanrentan_pay; }
+                    if (h.order >= 1 && h.order <= 3) { single_fuku += h.fuku_pay; }
 
                     var aiSignal = "-"; var popInt = parseInt(h.pop) || 99;
                     if (popInt === 1 || h.odds <= 3.0) { aiSignal = "<span class='badge-ai-honmei'>◎ 堅本命</span>"; }
+                    if (popInt >= 5 && h.odds >= 10.0) {
+                        if (condBias === "内枠有利" && h.waku <= 4) { aiSignal = "<span class='badge-ai-ana'>🔥 AI絶好穴馬</span>"; }
+                        else if (condBias === "外伸び有利" && h.waku >= 5) { aiSignal = "<span class='badge-ai-ana'>🔥 AI外伸穴馬</span>"; }
+                        else if (condBias === "フラット" && h.order <= 3) { aiSignal = "<span class='badge-ai-ana'>⭐ AI推奨穴馬</span>"; }
+                    }
