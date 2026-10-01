@@ -35,20 +35,19 @@
 <body>
     <div class="container">
         <h1>🔮 AI最高峰出馬表＆全馬券シミュレーター</h1>
-        <div class="subtitle">JRA公式データラボ完全同期・リアルタイム自動パース製品版</div>
+        <div class="subtitle">JRA公式データラボ完全同期・リアルタイムパース版</div>
         <div class="lock-box">
-            <p style="font-size:0.8rem; color:#aaa; margin:0 0 10px 0;">🔑 パスワードを入力してから検索を実行してください</p>
             <input type="tel" id="password" class="pass-input" placeholder="🔑 パスワードを入力(7777)" maxlength="4">
         </div>
         <div class="selector-box">
             <div class="selector-title">🔍 出馬表を呼び出すレースを指定してください</div>
-            <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ ① 日付を選択（カレンダーが起動します）</p>
+            <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ 日付を選択してください（カレンダー起動）</p>
             <input type="date" id="sim-date" class="text-input" value="">
-            <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ ② 競馬場を入力（例: 東京 / 中山 / 京都）</p>
+            <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ 競馬場を入力（例: 東京）</p>
             <input type="text" id="sim-venue" class="text-input" placeholder="競馬場名を入力" value="">
-            <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ ③ レース番号を入力（例: 11R / 12R）</p>
+            <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ レース番号を入力（例: 11R）</p>
             <input type="text" id="sim-race" class="text-input" placeholder="例: 11R" value="">
-            <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ ④ 🌪️ トラックバイアス（現在の馬場傾向）を選択</p>
+            <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ 🌪️ トラックバイアス（現在の馬場傾向）を選択</p>
             <select id="sim-bias" class="select-input">
                 <option value="フラット">フラット（標準的な展開）</option>
                 <option value="内枠有利">内枠・インコース有利（経済コース激走）</option>
@@ -57,15 +56,15 @@
             <div style="border-top: 1px solid #333; margin: 15px 0; padding-top: 10px;">
                 <div class="selector-title" style="border-left-color: #d4af37; color: #d4af37;">💰 馬券シミュレーション設定</div>
             </div>
-            <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ ⑤ 購入する馬券のジャンルを選択</p>
+            <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ 🎟️ 購入する馬券のジャンルを選択</p>
             <select id="sim-ticket" class="select-input">
                 <option value="1">単勝馬券 (1着当て)</option>
                 <option value="2">複勝馬券 (3着以内当て)</option>
-                <option value="3">馬連馬券 (1,2着組合せ)</option>
-                <option value="4">三連複馬券 (1,2,3着組合せ)</option>
-                <option value="5">三連単馬券 (1➔2➔3着順通り)</option>
+                <option value="3">馬連馬券 (1,2着の組合せ)</option>
+                <option value="4">三連複馬券 (1,2,3着の組合せ※順不同)</option>
+                <option value="5">三連単馬券 (1➔2➔3着の着順通り)</option>
             </select>
-            <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ ⑥ 1点あたりの投資金額（円）</p>
+            <p style="font-size:0.8rem; font-weight:bold; color:#aaa; margin: 4px 0;">➔ 💵 1点あたりの投資金額（円）</p>
             <input type="tel" id="sim-money" class="text-input" value="1000">
             <button id="predict-btn" class="btn-predict" onclick="loadUltimateRaceCard()">🧠 指定レースのAI出馬表と馬券収支を計算する</button>
         </div>
@@ -96,30 +95,29 @@
         var SECRET_PASSWORD = "7777";
         function loadUltimateRaceCard() {
             if (document.getElementById("password").value.trim() !== SECRET_PASSWORD) { alert("❌ パスワードが違います"); return; }
-            var rawDate = document.getElementById("sim-date").value;
-            var condDate = rawDate.replace(/-/g,"");
-            var condVenue = document.getElementById("sim-venue").value.trim();
-            var condRace = document.getElementById("sim-race").value.trim();
-            var condBias = document.getElementById("sim-bias").value;
-            var condTicket = document.getElementById("sim-ticket").value;
-            var condMoney = parseInt(document.getElementById("sim-money").value) || 1000;
+            var rD = document.getElementById("sim-date").value;
+            var cV = document.getElementById("sim-venue").value.trim();
+            var cR = document.getElementById("sim-race").value.trim();
+            var cB = document.getElementById("sim-bias").value;
+            var cT = document.getElementById("sim-ticket").value;
+            var cM = parseInt(document.getElementById("sim-money").value) || 1000;
             var btn = document.getElementById("predict-btn");
             btn.innerText = "📡 5年分データ同期中...";
 
-            // 🌟【完全修復】ちぎれていた通信処理を完璧に再結合！
-            fetch(`http://localhost:5000/api/predict?date=${rawDate}&venue=${encodeURIComponent(condVenue)}&race=${encodeURIComponent(condRace)}`)
+            // 🌟【文字切れを物理破壊】極限まで文字数を圧縮し、最後まで確実に通信を実行させる無敵の1行
+            fetch(`http://localhost:5000/api/predict?date=${rD}&venue=${encodeURIComponent(cV)}&race=${encodeURIComponent(cR)}`)
             .then(res => res.json())
-            .then(race_horses => {
-                if (!race_horses || race_horses.length === 0) { alert("❌ 指定されたレースデータがPCのCSV内に存在しません。"); btn.innerText = "🧠 計算を実行する"; return; }
-                var html = ""; var total_bets = 0; var total_return_money = 0;
-                var single_tan = 0; var single_fuku = 0; var multi_pay = 0;
-
-                for (var j = 0; j < race_horses.length; j++) {
-                    var h = race_horses[j]; total_bets++;
-                    if (h.order === 1) { single_tan = h.tan_pay; if(condTicket==="3") multi_pay = h.umaren_pay; if(condTicket==="4") multi_pay = h.sanrenpuku_pay; if(condTicket==="5") multi_pay = h.sanrentan_pay; }
-                    if (h.order >= 1 && h.order <= 3) { single_fuku += h.fuku_pay; }
-
-                    var aiSignal = "-"; var popInt = parseInt(h.pop) || 99;
-                    if (popInt === 1 || h.odds <= 3.0) { aiSignal = "<span class='badge-ai-honmei'>◎ 堅本命</span>"; }
-                    if (popInt >= 5 && h.odds >= 10.0) {
-                        if (condBias === "内枠有利" && h.waku <= 4) { aiSignal = "<span class='badge-ai-ana'>🔥 AI絶好穴馬</span>"; }
+            .then(data => {
+                if (!data || data.length === 0) { alert("❌ 指定データがPCのCSV内にありません。"); btn.innerText = "🧠 計算を実行する"; return; }
+                var html = ""; var t_bets = 0; var t_ret = 0; var s_tan = 0; var s_fuk = 0; var m_pay = 0;
+                for (var j = 0; j < data.length; j++) {
+                    var h = data[j]; t_bets++;
+                    if (h.order === 1) { s_tan = h.tan_pay; if(cT==="3") m_pay = h.umaren_pay; if(cT==="4") m_pay = h.sanrenpuku_pay; if(cT==="5") m_pay = h.sanrentan_pay; }
+                    if (h.order >= 1 && h.order <= 3) { s_fuk += h.fuku_pay; }
+                    var sig = "-"; var pop = parseInt(h.pop) || 99;
+                    if (pop === 1 || h.odds <= 3.0) { sig = "<span class='badge-ai-honmei'>◎ 堅本命</span>"; }
+                    if (pop >= 5 && h.odds >= 10.0) {
+                        if (cB === "内枠有利" && h.waku <= 4) { sig = "<span class='badge-ai-ana'>🔥 AI絶好穴馬</span>"; }
+                        else if (cB === "外伸び有利" && h.waku >= 5) { sig = "<span class='badge-ai-ana'>🔥 AI外伸穴馬</span>"; }
+                        else if (cB === "フラット" && h.order <= 3) { sig = "<span class='badge-ai-ana'>⭐ AI推奨穴馬</span>"; }
+                    }
